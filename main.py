@@ -66,4 +66,4 @@ for alpha in [1,3,5,10]:
 
     model_dir = './models/nz_{}/alpha_{}'.format(int(args.nz), int(alpha))
     os.makedirs(model_dir)
-    model.save_model(model_dir + "model.ckpt")
+    model.save_weights(model_dir + "model.ckpt")
