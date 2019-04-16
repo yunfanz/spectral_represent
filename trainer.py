@@ -13,7 +13,7 @@ def add_noise(imgs, db=10, per_image=False):
     return imgs
 
 def trainer(model_object, input_tensor, label_tensor, train_size, datasess, test_data, use_conv=False, loss_type='CE', learning_rate=1e-4, alpha_r=3., 
-            batch_size=128, num_epoch=10, n_z=32, log_step=5, with_noise=False, val_step=1, bench_model=None, early_stop=10, stop_tol=0.05):
+            batch_size=128, num_epoch=10, n_z=32, log_step=5, with_noise=False, val_step=1, bench_model=None, early_stop=10, stop_tol=0.05, pre_mode='max'):
 
     model = model_object(sess=None, input_tensor=None, loss_type=loss_type, use_conv=use_conv, alpha_r=alpha_r,
         learning_rate=learning_rate, batch_size=batch_size, n_z=n_z)
@@ -32,6 +32,12 @@ def trainer(model_object, input_tensor, label_tensor, train_size, datasess, test
             
             if with_noise:
                 batch[0] = add_noise(batch[0], per_image=True)
+            if pre_mode == 'max':
+                batch[0] /= np.amax(batch[0], axis=(1,2), keepdims=True)
+            elif pre_mode == 'log':
+                batch[0] = np.log(batch[0])
+            else:
+                raise(ValueError)
             # Execute the forward and backward pass 
             # Report computed losses
             batch_lab = label_replace[batch[1]]
